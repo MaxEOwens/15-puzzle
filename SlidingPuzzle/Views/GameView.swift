@@ -79,8 +79,9 @@ struct GameView: View {
         }
     }
     private var currentBackgroundColor: Color {
-            if viewModel.inspectionActive {
-                return viewModel.inspectionTimeRemaining <= settingsViewModel.settings.warningTime ? .yellow : .red
+        let darkRed = Color(red: 0.5, green: 0, blue: 0)
+        if viewModel.inspectionActive {
+                return viewModel.inspectionTimeRemaining <= settingsViewModel.settings.warningTime ? .yellow : darkRed
             } else {
                 return settingsViewModel.settings.backgroundColor.color
             }
