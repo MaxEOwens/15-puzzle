@@ -8,6 +8,7 @@ struct GameView: View {
     let columns = Array(repeating: GridItem(.flexible()), count: 4)
 
     var body: some View {
+        
         NavigationStack {
             VStack {
                 HStack {
@@ -25,15 +26,14 @@ struct GameView: View {
                 
                 Spacer()
                 
-                let minutes = Int(viewModel.timeElapsed ?? 0) / 60 % 60
-                let seconds = Int(viewModel.timeElapsed ?? 0) % 60
-                let milliseconds = Int(viewModel.timeElapsed.truncatingRemainder(dividingBy: 1))
+//                let minutes = Int(viewModel.timeElapsed ?? 0) / 60 % 60
+//                let seconds = Int(viewModel.timeElapsed ?? 0) % 60
+//                let milliseconds = Int(viewModel.timeElapsed.description.index(viewModel.timeElapsed.description.endIndex, offsetBy: -2))
+//                                
+//                Text(String(format: "%02d:%02d:%02d", minutes, seconds, milliseconds))
+//                    .font(.headline)
                 
-                Text("Time: " + String(format: "%02d:%02d:%02d", minutes, seconds, milliseconds))
-                
-                
-                
-                
+                Text("Time: \(Double(viewModel.timeElapsed))s")
                     .font(.headline)
                 
                 Spacer()
@@ -54,6 +54,22 @@ struct GameView: View {
                 }
                 .padding()
             }
+            
+            
+            
+            
+            .background(settingsViewModel.settings.backgroundColor.color)
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             .onAppear {
                 viewModel.leaderboardModel = leaderboardModel
                 viewModel.showGame()
