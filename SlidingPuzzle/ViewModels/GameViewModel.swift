@@ -5,7 +5,8 @@ class GameViewModel: ObservableObject {
     @Published var tiles: [Tile] = []
     @Published var emptyTile: Tile?
     @Published var timer: Timer?
-    @Published var timeElapsed: TimeInterval = 0.00
+    @Published var timeElapsed: TimeInterval = 0
+    @Published var startTime: Date?
     @Published var moveCount: Int = 0
     @Published var isGameRunning: Bool = false
     
@@ -24,13 +25,24 @@ class GameViewModel: ObservableObject {
     func startGame(settings: Settings) {
         tiles = generateShuffledTiles()
         moveCount = 0
+        startTime = Date()
         timeElapsed = 0.00
         isGameRunning = true
         timer?.invalidate()
-
+        timer = nil
         timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
-            self.timeElapsed += 0.01
+            if let startTime = self.startTime{
+                self.timeElapsed = Date().timeIntervalSince(startTime)
+            }
+            // self.timeElapsed += 0.01
         }
+    }
+    func formattedTime(_ interval: TimeInterval) -> String {
+        let totalMilliseconds = Int(interval * 1000)
+        let minutes = (totalMilliseconds / 1000) / 60
+        let seconds = (totalMilliseconds / 1000) % 60
+        let milliseconds = (totalMilliseconds % 1000) / 10
+        return String(format: "%02d:%02d:%02d", minutes, seconds, milliseconds)
     }
     
     private func checkIfSolved() {
@@ -51,7 +63,7 @@ class GameViewModel: ObservableObject {
             )
 
             leaderboardModel?.addEntry(entry)
-            print("🎉 Puzzle solved in \(moveCount) moves and \(Int(timeElapsed)) seconds!")
+            print("🎉 Puzzle solved in \(moveCount) moves and \(formattedTime(timeElapsed))!")
         }
     }
 

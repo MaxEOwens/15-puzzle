@@ -25,16 +25,16 @@ struct GameView: View {
                 
                 Spacer()
                 
-                let minutes = Int(viewModel.timeElapsed ?? 0) / 60 % 60
-                let seconds = Int(viewModel.timeElapsed ?? 0) % 60
-                let milliseconds = Int(viewModel.timeElapsed.truncatingRemainder(dividingBy: 1))
-                
-                Text("Time: " + String(format: "%02d:%02d:%02d", minutes, seconds, milliseconds))
-                
-                
-                
-                
-                    .font(.headline)
+//                let totalMilliseconds = Int(viewModel.timeElapsed * 1000)
+//                let minutes = (totalMilliseconds / 1000) / 60
+//                let seconds = (totalMilliseconds / 1000) % 60
+//                let milliseconds = (totalMilliseconds % 1000) / 10 // two-digit ms
+//
+//                Text(String(format: "%02d:%02d:%02d", minutes, seconds, milliseconds))
+//                    .font(.largeTitle).monospacedDigit()
+                Text(viewModel.formattedTime(viewModel.timeElapsed))
+                    .font(.largeTitle)
+                    .monospacedDigit()
                 
                 Spacer()
                 
