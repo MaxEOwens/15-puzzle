@@ -37,6 +37,11 @@ class GameViewModel: ObservableObject {
             // self.timeElapsed += 0.01
         }
     }
+    
+    
+
+    
+    
     func formattedTime(_ interval: TimeInterval) -> String {
         let totalMilliseconds = Int(interval * 1000)
         let minutes = (totalMilliseconds / 1000) / 60
@@ -96,25 +101,85 @@ class GameViewModel: ObservableObject {
     }
 
     // MARK: - Helpers
-    private func generateShuffledTiles() -> [Tile] {
+//    private func generateShuffledTiles() -> [Tile] {
+//        var tiles = (1...15).map {
+//            Tile(id: $0, row: ($0 - 1) / 4, col: ($0 - 1) % 4, value: $0)
+//        } + [Tile(id: 16, row: 3, col: 3, value: 0)]
+//
+//        tiles.shuffle()
+//
+//        // Make sure row/col values match the new shuffled positions
+//        for (i, _) in tiles.enumerated() {
+//            tiles[i].row = i / 4
+//            tiles[i].col = i % 4
+//        }
+//
+//        if let blank = tiles.first(where: { $0.value == 0 }) {
+//            emptyTile = blank
+//        }
+//
+//        return tiles
+//    }
+    
+    
+  
+    private func heuristic(_ tiles: [Tile]) -> Int {
+        var total = 0
+        for tile in tiles where tile.value != 0 {
+            let goalRow = (tile.value - 1) / 4
+            let goalCol = (tile.value - 1) % 4
+            total += abs(tile.row - goalRow) + abs(tile.col - goalCol)
+        }
+        return total
+    }
+    
+    
+    private func generateShuffledTiles(threshold: Int = 50) -> [Tile] {
+        // 1: Start from goal state
         var tiles = (1...15).map {
             Tile(id: $0, row: ($0 - 1) / 4, col: ($0 - 1) % 4, value: $0)
-        } + [Tile(id: 16, row: 3, col: 3, value: 0)]
+        } + [Tile(id: 16, row: 3, col: 3, value: 0)] // blank tile
 
-        tiles.shuffle()
+        // Repeat until heuristic is above threshold
+        while true {
+            // 2 & 3: Swap two arbitrary tiles twice
+            for _ in 0..<2 {
+                let i = Int.random(in: 0..<tiles.count)
+                var j = Int.random(in: 0..<tiles.count)
+                while i == j { j = Int.random(in: 0..<tiles.count) }
+                tiles.swapAt(i, j)
+            }
 
-        // Make sure row/col values match the new shuffled positions
-        for (i, _) in tiles.enumerated() {
-            tiles[i].row = i / 4
-            tiles[i].col = i % 4
+            // 4: Update row/col to reflect shuffled positions
+            for i in tiles.indices {
+                tiles[i].row = i / 4
+                tiles[i].col = i % 4
+            }
+
+            // 5: Compute heuristic (e.g., Manhattan distance)
+            let h = heuristic(tiles)
+
+            // 6: If heuristic is high enough, return
+            if h >= threshold {
+                if let blank = tiles.first(where: { $0.value == 0 }) {
+                    emptyTile = blank
+                }
+                return tiles
+            }
+
+            // 8: Otherwise, repeat
         }
-
-        if let blank = tiles.first(where: { $0.value == 0 }) {
-            emptyTile = blank
-        }
-
-        return tiles
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     private func generateSolvedTiles() -> [Tile] {
         let tiles = (1...15).map {

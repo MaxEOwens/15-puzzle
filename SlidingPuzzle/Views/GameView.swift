@@ -26,6 +26,8 @@ struct GameView: View {
                 
                 Spacer()
                 
+                //viewModel.timeElapsed = viewModel.timeElapsed - settingsViewModel.settings.inspectionTime
+                
                 Text(viewModel.formattedTime(viewModel.timeElapsed))
                     .font(.largeTitle)
                     .monospacedDigit()
@@ -33,7 +35,7 @@ struct GameView: View {
                 Spacer()
                 
                 // Tile grid with conditional gesture
-                LazyVGrid(columns: columns, spacing: 5) {
+                LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(viewModel.tiles) { tile in
                         TileView(tile: tile)
                             .modifier(TileGestureModifier(tile: tile,
@@ -43,9 +45,21 @@ struct GameView: View {
                 }
                 .padding()
                 
-                Button("Play") {
+                
+                Button(action: {
                     viewModel.startGame(settings: settingsViewModel.settings)
+                }) {
+                    Text("Scramble")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                        .shadow(radius: 5)
                 }
+                
+                
                 .padding()
             }
             
