@@ -169,7 +169,18 @@ class GameViewModel: ObservableObject {
         moveCount += 1
         checkIfSolved()
     }
+    
+    func handleTouch(at point: CGPoint, tileSize: CGFloat = 80, padding: CGFloat = 8) {
+        let totalSize = tileSize + padding
+        let col = Int(point.x / totalSize)
+        let row = Int(point.y / totalSize)
 
+        guard row >= 0 && row < 4 && col >= 0 && col < 4 else { return }
+
+        if let tile = tiles.first(where: { $0.row == row && $0.col == col }) {
+            move(tile: tile)
+        }
+    }
 
     // MARK: - Helpers
 //    private func generateShuffledTiles() -> [Tile] {

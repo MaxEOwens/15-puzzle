@@ -12,6 +12,7 @@ struct TileGestureModifier: ViewModifier {
     let tile: Tile
     let controlStyle: String
     let moveAction: (Tile) -> Void
+    let dragAction: (CGPoint) -> Void
 
     func body(content: Content) -> some View {
         if controlStyle == "Tap" {
@@ -19,12 +20,12 @@ struct TileGestureModifier: ViewModifier {
                 .onTapGesture {
                     moveAction(tile)
                 }
-        } else { // Swipe
+        } else {
             content
                 .gesture(
                     DragGesture(minimumDistance: 0)
-                        .onChanged { _ in
-                            moveAction(tile)
+                        .onChanged { value in
+                            dragAction(value.location)
                         }
                 )
         }

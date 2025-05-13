@@ -43,9 +43,14 @@ struct GameView: View {
                 LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(viewModel.tiles) { tile in
                         TileView(tile: tile)
-                            .modifier(TileGestureModifier(tile: tile,
-                                                          controlStyle: settingsViewModel.settings.controlStyle,
-                                                          moveAction: viewModel.move))
+                            .modifier(TileGestureModifier(
+                                tile: tile,
+                                controlStyle: settingsViewModel.settings.controlStyle,
+                                moveAction: viewModel.move,
+                                dragAction: { point in
+                                    viewModel.handleTouch(at: point)
+                                }
+                            ))
                     }
                 }
                 .padding()
