@@ -29,13 +29,17 @@ struct GameView: View {
                 if viewModel.inspectionActive {
                     Text("Inspection: \(viewModel.inspectionTimeRemaining)")
                         .font(.title2)
-                        .foregroundColor(.white)
-                        .padding()
+                        .padding(8)
+                        .background(Color.gray.opacity(0.2))
+                        .cornerRadius(8)
                 }
                 
                 Text(viewModel.formattedTime(viewModel.timeElapsed))
                     .font(.largeTitle)
                     .monospacedDigit()
+                    .padding(8)
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
                 
                 Spacer()
                 
@@ -88,9 +92,11 @@ struct GameView: View {
         }
     }
     private var currentBackgroundColor: Color {
-        let darkRed = Color(red: 0.5, green: 0, blue: 0)
+        let pastelRed = Color(red: 1, green: 0.3686, blue: 0.3686)
+        let pastelYellow = Color(red: 0.9882, green: 0.8314, blue: 0.3647)
+
         if viewModel.inspectionActive {
-                return viewModel.inspectionTimeRemaining <= settingsViewModel.settings.warningTime ? .yellow : darkRed
+                return viewModel.inspectionTimeRemaining <= settingsViewModel.settings.warningTime ?  pastelYellow : pastelRed
             } else {
                 return settingsViewModel.settings.backgroundColor.color
             }

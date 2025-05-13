@@ -24,11 +24,10 @@ struct CodableColor: Codable {
 
 
 struct Settings: Codable {
-    var animationSpeed: Double
     var controlStyle: String
     var inspectionTime: Int
     var warningTime: Int
     var backgroundColor: CodableColor
     
-    static let `default` = Settings(animationSpeed: 0.3, controlStyle: "Tap", inspectionTime: 5, warningTime: 3, backgroundColor: CodableColor(color: .white))
+    static let `default` = Settings(controlStyle: "Tap", inspectionTime: 5, warningTime: 3, backgroundColor: CodableColor(color: .white))
 }

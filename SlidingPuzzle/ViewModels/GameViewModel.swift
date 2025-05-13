@@ -23,8 +23,13 @@ class GameViewModel: ObservableObject {
         moveCount = 0
         timeElapsed = 0.00
         isGameRunning = false
+
         timer?.invalidate()
+        inspectionTimer?.invalidate()
+        inspectionActive = false
+        inspectionTimeRemaining = 0
     }
+
 
     // MARK: - Start new shuffled game
     func startGame(settings: Settings) {
