@@ -25,18 +25,13 @@ struct GameView: View {
                 .padding()
                 
                 Spacer()
-                
-<<<<<<< HEAD
-                //viewModel.timeElapsed = viewModel.timeElapsed - settingsViewModel.settings.inspectionTime
-=======
+
                 if viewModel.inspectionActive {
                     Text("Inspection: \(viewModel.inspectionTimeRemaining)")
                         .font(.title2)
                         .foregroundColor(.white)
                         .padding()
                 }
-
->>>>>>> 0c153917d1e489705061fa4a83c1593798f91ec6
                 
                 Text(viewModel.formattedTime(viewModel.timeElapsed))
                     .font(.largeTitle)
