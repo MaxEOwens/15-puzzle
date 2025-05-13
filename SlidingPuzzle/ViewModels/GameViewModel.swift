@@ -5,15 +5,17 @@ class GameViewModel: ObservableObject {
     @Published var tiles: [Tile] = []
     @Published var emptyTile: Tile?
     @Published var timer: Timer?
-    @Published var timeElapsed: TimeInterval = 0
+    @Published var timeElapsed: TimeInterval = 0.00
     @Published var moveCount: Int = 0
     @Published var isGameRunning: Bool = false
+    
+    var leaderboardModel: LeaderboardViewModel?
 
     // MARK: - Show solved board (used before Play is pressed)
     func showGame() {
         tiles = generateSolvedTiles()
         moveCount = 0
-        timeElapsed = 0
+        timeElapsed = 0.00
         isGameRunning = false
         timer?.invalidate()
     }
@@ -22,12 +24,34 @@ class GameViewModel: ObservableObject {
     func startGame(settings: Settings) {
         tiles = generateShuffledTiles()
         moveCount = 0
-        timeElapsed = 0
+        timeElapsed = 0.00
         isGameRunning = true
         timer?.invalidate()
 
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            self.timeElapsed += 1
+        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+            self.timeElapsed += 0.01
+        }
+    }
+    
+    private func checkIfSolved() {
+        for i in 0..<15 {
+            if tiles[i].value != i + 1 {
+                return // Not solved
+            }
+        }
+
+        // The last tile should be empty (value == 0)
+        if tiles[15].value == 0 {
+            isGameRunning = false
+            timer?.invalidate()
+            let entry = LeaderboardEntry(
+                time: timeElapsed,
+                moves: moveCount,
+                date: Date()
+            )
+
+            leaderboardModel?.addEntry(entry)
+            print("🎉 Puzzle solved in \(moveCount) moves and \(Int(timeElapsed)) seconds!")
         }
     }
 
@@ -54,6 +78,8 @@ class GameViewModel: ObservableObject {
             emptyTile = tiles[tileIndex]
 
             moveCount += 1
+
+            checkIfSolved()
         }
     }
 

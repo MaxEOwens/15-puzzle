@@ -7,7 +7,7 @@ struct TileView: View {
         ZStack {
             Rectangle()
                 .fill(tile.value == 0 ? Color.clear : Color.blue)
-                .frame(height: 70)
+                .frame(height: 80)
                 .cornerRadius(8)
 
             if tile.value != 0 {
