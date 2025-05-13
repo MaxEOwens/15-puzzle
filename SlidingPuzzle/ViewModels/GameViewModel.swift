@@ -100,32 +100,76 @@ class GameViewModel: ObservableObject {
         } else if !isGameRunning {
             startMainTimer()
         }
+
         guard isGameRunning else { return }
         guard let emptyIndex = tiles.firstIndex(where: { $0.value == 0 }),
               let tileIndex = tiles.firstIndex(of: tile) else { return }
 
-        let empty = tiles[emptyIndex]
-        let dx = abs(empty.col - tile.col)
-        let dy = abs(empty.row - tile.row)
+        var emptyTile = tiles[emptyIndex]
+        let selectedTile = tiles[tileIndex]
 
-        if (dx == 1 && dy == 0) || (dx == 0 && dy == 1) {
-            // Swap rows and columns
-            tiles[emptyIndex].row = tile.row
-            tiles[emptyIndex].col = tile.col
-            tiles[tileIndex].row = empty.row
-            tiles[tileIndex].col = empty.col
+        let sameRow = emptyTile.row == selectedTile.row
+        let sameCol = emptyTile.col == selectedTile.col
 
-            // Swap tiles in the array so the view updates
-            tiles.swapAt(emptyIndex, tileIndex)
-
-            // Update the reference to the new empty tile
-            emptyTile = tiles[tileIndex]
-
-            moveCount += 1
-
-            checkIfSolved()
+        guard sameRow || sameCol else {
+            return // Must be in the same row or column
         }
+
+        var affectedTiles: [Tile] = []
+
+        if sameRow {
+            let row = emptyTile.row
+            let range: [Int] = emptyTile.col < selectedTile.col
+                ? Array((emptyTile.col + 1)...selectedTile.col)
+                : Array((selectedTile.col..<emptyTile.col).reversed())
+
+            for col in range {
+                if let index = tiles.firstIndex(where: { $0.row == row && $0.col == col }) {
+                    affectedTiles.append(tiles[index])
+                }
+            }
+
+            for tile in affectedTiles {
+                if let index = tiles.firstIndex(of: tile) {
+                    tiles[index].col += (emptyTile.col < selectedTile.col) ? -1 : 1
+                }
+            }
+
+            tiles[emptyIndex].col = selectedTile.col
+        } else if sameCol {
+            let col = emptyTile.col
+            let range: [Int] = emptyTile.row < selectedTile.row
+                ? Array((emptyTile.row + 1)...selectedTile.row)
+                : Array((selectedTile.row..<emptyTile.row).reversed())
+
+
+            for row in range {
+                if let index = tiles.firstIndex(where: { $0.col == col && $0.row == row }) {
+                    affectedTiles.append(tiles[index])
+                }
+            }
+
+            for tile in affectedTiles {
+                if let index = tiles.firstIndex(of: tile) {
+                    tiles[index].row += (emptyTile.row < selectedTile.row) ? -1 : 1
+                }
+            }
+
+            tiles[emptyIndex].row = selectedTile.row
+        }
+
+        // Update tile positions in array
+        tiles.sort { $0.row * 4 + $0.col < $1.row * 4 + $1.col }
+
+        // Update reference to new empty tile
+        if let newEmpty = tiles.first(where: { $0.value == 0 }) {
+            emptyTile = newEmpty
+        }
+
+        moveCount += 1
+        checkIfSolved()
     }
+
 
     // MARK: - Helpers
 //    private func generateShuffledTiles() -> [Tile] {

@@ -52,9 +52,13 @@ struct GameView: View {
                 
                 
                 Button(action: {
-                    viewModel.startGame(settings: settingsViewModel.settings)
+                    if viewModel.isGameRunning || viewModel.inspectionActive {
+                        viewModel.showGame() // Reset to solved board
+                    } else {
+                        viewModel.startGame(settings: settingsViewModel.settings)
+                    }
                 }) {
-                    Text("Scramble")
+                    Text(viewModel.isGameRunning || viewModel.inspectionActive ? "Reset" : "Scramble")
                         .font(.title2)
                         .foregroundColor(.white)
                         .padding()
