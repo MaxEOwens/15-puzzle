@@ -26,7 +26,17 @@ struct GameView: View {
                 
                 Spacer()
                 
+<<<<<<< HEAD
                 //viewModel.timeElapsed = viewModel.timeElapsed - settingsViewModel.settings.inspectionTime
+=======
+                if viewModel.inspectionActive {
+                    Text("Inspection: \(viewModel.inspectionTimeRemaining)")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                }
+
+>>>>>>> 0c153917d1e489705061fa4a83c1593798f91ec6
                 
                 Text(viewModel.formattedTime(viewModel.timeElapsed))
                     .font(.largeTitle)
@@ -64,13 +74,20 @@ struct GameView: View {
             }
             
             
-            .background(settingsViewModel.settings.backgroundColor.color)
-            
+            // .background(settingsViewModel.settings.backgroundColor.color)
+            .background(currentBackgroundColor)
             
             .onAppear {
                 viewModel.leaderboardModel = leaderboardModel
                 viewModel.showGame()
             }
         }
+    }
+    private var currentBackgroundColor: Color {
+            if viewModel.inspectionActive {
+                return viewModel.inspectionTimeRemaining <= settingsViewModel.settings.warningTime ? .yellow : .red
+            } else {
+                return settingsViewModel.settings.backgroundColor.color
+            }
     }
 }

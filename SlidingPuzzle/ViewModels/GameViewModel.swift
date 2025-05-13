@@ -9,6 +9,11 @@ class GameViewModel: ObservableObject {
     @Published var startTime: Date?
     @Published var moveCount: Int = 0
     @Published var isGameRunning: Bool = false
+    @Published var inspectionActive: Bool = false
+    @Published var inspectionTimeRemaining: Int = 0
+
+    private var inspectionTimer: Timer?
+
     
     var leaderboardModel: LeaderboardViewModel?
 
@@ -25,23 +30,34 @@ class GameViewModel: ObservableObject {
     func startGame(settings: Settings) {
         tiles = generateShuffledTiles()
         moveCount = 0
-        startTime = Date()
-        timeElapsed = 0.00
-        isGameRunning = true
+        timeElapsed = 0
+        isGameRunning = false
+        inspectionActive = true
+        inspectionTimeRemaining = settings.inspectionTime
+
         timer?.invalidate()
-        timer = nil
-        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
-            if let startTime = self.startTime{
-                self.timeElapsed = Date().timeIntervalSince(startTime)
+        inspectionTimer?.invalidate()
+
+        inspectionTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if self.inspectionTimeRemaining > 0 {
+                self.inspectionTimeRemaining -= 1
+            } else {
+                self.inspectionActive = false
+                self.inspectionTimer?.invalidate()
+                startMainTimer()
             }
-            // self.timeElapsed += 0.01
         }
     }
+<<<<<<< HEAD
     
     
 
     
     
+=======
+
+>>>>>>> 0c153917d1e489705061fa4a83c1593798f91ec6
     func formattedTime(_ interval: TimeInterval) -> String {
         let totalMilliseconds = Int(interval * 1000)
         let minutes = (totalMilliseconds / 1000) / 60
@@ -71,8 +87,27 @@ class GameViewModel: ObservableObject {
             print("🎉 Puzzle solved in \(moveCount) moves and \(formattedTime(timeElapsed))!")
         }
     }
+    
+    private func startMainTimer() {
+        isGameRunning = true
+        startTime = Date()
+        timeElapsed = 0
 
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { [weak self] _ in
+            guard let self = self, let start = self.startTime else { return }
+            self.timeElapsed = Date().timeIntervalSince(start)
+        }
+    }
+    
     func move(tile: Tile) {
+        if inspectionActive {
+            inspectionActive = false
+            inspectionTimer?.invalidate()
+            startMainTimer()
+        } else if !isGameRunning {
+            startMainTimer()
+        }
         guard isGameRunning else { return }
         guard let emptyIndex = tiles.firstIndex(where: { $0.value == 0 }),
               let tileIndex = tiles.firstIndex(of: tile) else { return }
