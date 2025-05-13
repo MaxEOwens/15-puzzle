@@ -11,7 +11,11 @@ class LeaderboardViewModel: ObservableObject {
 
     func addEntry(_ entry: LeaderboardEntry) {
         bestTimes.append(entry)
+        bestTimes.sort { $0.time < $1.time }
+
         lowestMoves.append(entry)
+        lowestMoves.sort { $0.moves < $1.moves }
+
         StorageManager.saveLeaderboard(bestTimes, for: "time")
         StorageManager.saveLeaderboard(lowestMoves, for: "moves")
     }
