@@ -49,15 +49,7 @@ class GameViewModel: ObservableObject {
             }
         }
     }
-<<<<<<< HEAD
-    
-    
 
-    
-    
-=======
-
->>>>>>> 0c153917d1e489705061fa4a83c1593798f91ec6
     func formattedTime(_ interval: TimeInterval) -> String {
         let totalMilliseconds = Int(interval * 1000)
         let minutes = (totalMilliseconds / 1000) / 60
